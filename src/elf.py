@@ -5,8 +5,8 @@ import re
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-URL_LOGIN = "https://elf3.pk.edu.pl/login/index.php"
-URL_VIEW = "http://elf3.pk.edu.pl/mod/assign/view.php"
+URL_LOGIN = "https://elf2.pk.edu.pl/login/index.php"
+URL_VIEW = "http://elf2.pk.edu.pl/mod/assign/view.php"
 
 DOCUMENTATIONS = {
     1: 47098,
@@ -58,7 +58,7 @@ class Elf:
                     if re.search('Brak przesłanego zadania', row, re.IGNORECASE):
                         s[kind][lab] = '-'
                     else:
-                        s[kind][lab] = '+'
+                        s[kind][lab] = '\'+'
 
     @staticmethod
     def math_pairs(homeworks):
