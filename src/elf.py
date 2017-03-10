@@ -48,17 +48,29 @@ class Elf:
         return r.text
 
     def parse_view_page(self, content, homeworks, lab, kind):
+        c = content.replace("\n", "")
         for h in homeworks:
             for s in h['students']:
-                result = re.search(s['forename'] + '(.*?)' + s['lastname'] + '</a>(.*)cell c5', content, re.IGNORECASE)
+                result = re.search(s['forename'] + '(.*?)' + s['lastname'] + '</a>(.*?)</tr>', c, re.IGNORECASE)
                 if result is None:
                     s[kind][lab] = '?'
                 else:
                     row = result.group(2)
                     if re.search('Brak przesłanego zadania', row, re.IGNORECASE):
                         s[kind][lab] = '-'
-                    else:
-                        s[kind][lab] = '\'+'
+                    elif kind == 'doc':
+                        pdf = re.search('\.pdf', row, re.IGNORECASE)
+                        if pdf:
+                            s[kind][lab] = '\'+'
+                        else:
+                            s[kind][lab] = '-'
+                    elif kind == 'src':
+                        zip = re.search('\.zip', row, re.IGNORECASE)
+                        if zip:
+                            s[kind][lab] = '\'+'
+                        else:
+                            s[kind][lab] = '-'
+
 
     @staticmethod
     def math_pairs(homeworks):

@@ -61,7 +61,7 @@ class Pus:
                 for l in LABS:
                     hw = current['homeworks'][l]
                     v = hw
-                    if not hw or hw == '-' or hw == '?' or hw == 'o':
+                    if not hw or hw == '-' or hw == '?' or hw == 'o' or hw == '+' or hw == '\'+':
                         v = current['doc'][l]
                         row_nr = START_ROW + 1 + h_nr * GROUP_ROWS + 2 + i
                         cell = LABS_ROWS[l] + str(row_nr)
