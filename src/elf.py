@@ -8,6 +8,12 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 URL_LOGIN = "https://elf2.pk.edu.pl/login/index.php"
 URL_VIEW = "http://elf2.pk.edu.pl/mod/assign/view.php"
 
+URL_INDICES = "http://elf2.pk.edu.pl/mod/assign/view.php?id=47093&action=grading"
+URL_CONFIRMATIONS = "http://elf2.pk.edu.pl/mod/assign/view.php?id=47097&action=grading"
+
+URL_GESTURES = "http://elf2.pk.edu.pl/mod/choice/report.php?id=50176"
+URL_GESTURES_TXT = "http://elf2.pk.edu.pl/mod/choice/report.php"
+
 DOCUMENTATIONS = {
     1: 47098,
     2: 47100,
@@ -71,6 +77,51 @@ class Elf:
                         else:
                             s[kind][lab] = '-'
 
+    def get_indices(self, students):
+        content = self.session.get(URL_INDICES)
+        c = content.text.replace("\n", "")
+        for h in students:
+            for s in h['students']:
+                result = re.search(s['forename'] + '(.*?)' + s['lastname'] + '</a>(.*?)</tr>', c, re.IGNORECASE)
+                if result is None:
+                    s['index'] = '?'
+                else:
+                    row = result.group(2)
+                    r = re.search('<div class="no-overflow"><p>([0-9]+)', row)
+                    if r:
+                        s['index'] = r.group(1)
+                    else:
+                        s['index'] = '-'
+
+    def get_confirmation(self, students):
+        content = self.session.get(URL_CONFIRMATIONS)
+        c = content.text.replace("\n", "")
+        for h in students:
+            for s in h['students']:
+                result = re.search(s['forename'] + '(.*?)' + s['lastname'] + '</a>(.*?)</tr>', c, re.IGNORECASE)
+                if result is None:
+                    s['confirmation'] = '?'
+                else:
+                    row = result.group(2)
+                    r = re.search('<div class="no-overflow"><p>Przyjmuję do wiadomości informacje zawarte w syllabusie, zasadach oceniania oraz opisie przebiegu laboratorium. Potwierdzam także swoje \.\.\.', row)
+                    if r:
+                        s['confirmation'] = '\'+'
+                    else:
+                        s['confirmation'] = '-'
+
+    def get_gesture(self, students):
+        c = self.session.get(URL_GESTURES).text
+        sesskey = re.search('"sesskey":"(.*?)"', c).group(1)
+
+        params = {'sesskey': sesskey, 'id': '50176', 'download': 'txt'}
+        form = urlencode(params)
+        txt = self.session.post(URL_GESTURES_TXT, params).text
+
+        for h in students:
+            for s in h['students']:
+                result = re.search(s['lastname'] + '(.*?)' + s['forename'] + '(.*?)PUS (\d\d) -', txt, re.IGNORECASE)
+                if result:
+                    s['gesture_lab'] = int(result.group(3))
 
     @staticmethod
     def math_pairs(homeworks):

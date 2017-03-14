@@ -15,4 +15,10 @@ if __name__ == "__main__":
 
     pus.update_sheet(homeworks)
 
+    elf.get_gesture(homeworks)
+    elf.get_indices(homeworks)
+    elf.get_confirmation(homeworks)
+
+    pus.update_gestures(homeworks)
+
     print('done')

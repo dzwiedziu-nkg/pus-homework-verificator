@@ -58,12 +58,13 @@ class Pus:
             for i in range(0, len(h['students'])):
                 current = h['students'][i]
                 print('  Student: ' + str(i + 1) + ". " + current['forename'] + ' ' + current['lastname'], end='', flush=True)
+                row_nr = START_ROW + 1 + h_nr * GROUP_ROWS + 2 + i
+
                 for l in LABS:
                     hw = current['homeworks'][l]
                     v = hw
                     if not hw or hw == '-' or hw == '?' or hw == 'o' or hw == '+' or hw == '\'+':
                         v = current['doc'][l]
-                        row_nr = START_ROW + 1 + h_nr * GROUP_ROWS + 2 + i
                         cell = LABS_ROWS[l] + str(row_nr)
                         annotation = None
                         if v != '-' and current['src'][l] == '-':
@@ -73,5 +74,59 @@ class Pus:
                             self.sheet.update_cell(cell, v)
                     print(' ' + v, end='', flush=True)
                 print('')
+            print('')
+            h_nr += 1
+
+    def update_gestures(self, homeworks):
+        h_nr = 0
+
+        part_parsed = {}
+        participant = self.sheet.get_values('Gesty!B3:B')
+        filled = self.sheet.get_values('AX:BA')
+        for p in participant:
+            if p[0].isdigit():
+                part_parsed[int(p[0])] = 1
+
+        for h in homeworks:
+            print('Group: ' + h['name'])
+            for i in range(0, len(h['students'])):
+                current = h['students'][i]
+                print('  Student: ' + str(i + 1) + ". " + current['forename'] + ' ' + current['lastname'], end='', flush=True)
+                row_nr = START_ROW + 1 + h_nr * GROUP_ROWS + 2 + i
+
+                ax = '-'
+                ay = '-'
+                az = '-'
+                ba = ''
+                if 'gesture_lab' in current:
+                    ba = current['gesture_lab']
+
+                if current['index'].isdigit():
+                    ax = '\'+'
+                    #self.sheet.update_cell('AX%d' % row_nr, '\'+')
+                    if int(current['index']) in part_parsed:
+                        az = '\'+'
+                        #self.sheet.update_cell('AZ%d' % row_nr, '\'+')
+                    #else:
+                        #self.sheet.update_cell('AZ%d' % row_nr, '-')
+                #else:
+                    #self.sheet.update_cell('AX%d' % row_nr, '-')
+                    #self.sheet.update_cell('AZ%d' % row_nr, '-')
+
+                #self.sheet.update_cell('AY%d' % row_nr, current['confirmation'])
+                ay = current['confirmation']
+
+                if len(filled) <= row_nr or len(filled[row_nr - 1]) < 1 or ax.replace('\'', '') != filled[row_nr - 1][0]:
+                    self.sheet.update_cell('AX%d' % row_nr, ax)
+                if len(filled) <= row_nr or len(filled[row_nr - 1]) < 2 or ay.replace('\'', '') != filled[row_nr - 1][1]:
+                    self.sheet.update_cell('AY%d' % row_nr, ay)
+                if len(filled) <= row_nr or len(filled[row_nr - 1]) < 3 or az.replace('\'', '') != filled[row_nr - 1][2]:
+                    self.sheet.update_cell('AZ%d' % row_nr, az)
+                if len(filled) <= row_nr or len(filled[row_nr - 1]) < 4 or ba != int(filled[row_nr - 1][3]):
+                    if len(filled[row_nr - 1]) >= 4:
+                        self.sheet.update_cell('BA%d' % row_nr, ba)
+
+                print('')
+
             print('')
             h_nr += 1
