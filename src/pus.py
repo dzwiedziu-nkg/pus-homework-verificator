@@ -96,6 +96,8 @@ class Pus:
             print('Group: ' + h['name'])
             for i in range(0, len(h['students'])):
                 current = h['students'][i]
+                if current['lastname'] == 'GRUSZCZYŃSKA':
+                    print("jest")
                 print('  Student: ' + str(i + 1) + ". " + current['forename'] + ' ' + current['lastname'], end='', flush=True)
                 row_nr = START_ROW + 1 + h_nr * GROUP_ROWS + 2 + i
 
@@ -128,8 +130,8 @@ class Pus:
                 if len(filled) <= row_nr or len(filled[row_nr - 1]) < 3 or az.replace('\'', '') != filled[row_nr - 1][2]:
                     self.sheet.update_cell('AZ%d' % row_nr, az)
                 if len(filled) <= row_nr or len(filled[row_nr - 1]) < 4 or ba != int(filled[row_nr - 1][3]):
-                    if len(filled[row_nr - 1]) >= 4:
-                        self.sheet.update_cell('BA%d' % row_nr, ba)
+                    #if len(filled[row_nr - 1]) >= 4:
+                    self.sheet.update_cell('BA%d' % row_nr, ba)
 
                 print('')
 
