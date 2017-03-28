@@ -88,8 +88,9 @@ class Pus:
         participant = self.sheet.get_values('Gesty!B3:B')
         filled = self.sheet.get_values('AX:BA')
         for p in participant:
-            if p[0].isdigit():
-                part_parsed[int(p[0])] = 1
+            pp = p[0].split(' ')
+            if len(pp) and pp[0].isdigit():
+                part_parsed[int(pp[0])] = 1
 
         for h in homeworks:
             print('Group: ' + h['name'])
