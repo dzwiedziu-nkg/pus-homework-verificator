@@ -74,6 +74,7 @@ class Sheet:
         return values
 
     def update_cell(self, cell, value):
+        print("\nUpdate cell " + str(cell) + " = " + str(value))
         body = {'values': [[value]]}
         result = self.service.spreadsheets().values().update(
             spreadsheetId=self.spreadsheetId, range=cell,
