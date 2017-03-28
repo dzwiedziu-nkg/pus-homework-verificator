@@ -72,6 +72,8 @@ class Pus:
                             annotation = 'Brak kodów źródłowych'
                         if v == '+':
                             v = '\'+'
+                        if hw == '+':
+                            hw = '\'+'
                         if v != hw:
                             self.sheet.update_cell(cell, v)
                     print(' ' + v, end='', flush=True)
